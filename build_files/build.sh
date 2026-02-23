@@ -17,7 +17,7 @@ dnf5 install -y snapd
 mkdir -p /var/lib/snapd
 
 # Install GNOME desktop environment instead of KDE
-dnf5 install -y gnome-desktop
+dnf5 groupinstall -y gnome-desktop
 
 # Optionally, remove KDE if present (uncomment if desired)
 # dnf5 remove -y @kde-desktop
