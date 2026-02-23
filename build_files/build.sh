@@ -33,6 +33,7 @@ rm -f /etc/polkit-1/rules.d/*package* /etc/polkit-1/rules.d/*rpm*
 
 #### Example for enabling a System Unit File
 
-systemctl enable snapd.socket
-systemctl enable snapd.apparmor.service
-systemctl enable podman.socket
+## Commented out to test boot reliability
+# systemctl enable snapd.socket
+# systemctl enable snapd.apparmor.service
+# systemctl enable podman.socket
