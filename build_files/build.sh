@@ -16,8 +16,9 @@ dnf5 install -y snapd
 # Create snapd socket directory (required for snap to function properly)
 mkdir -p /var/lib/snapd
 
-# Install GNOME desktop environment instead of KDE
-dnf5 groupinstall -y gnome-desktop
+
+# Install core GNOME desktop packages instead of KDE
+dnf5 install -y gnome-shell gdm gnome-control-center gnome-terminal nautilus gnome-session gnome-settings-daemon gnome-software
 
 # Optionally, remove KDE if present (uncomment if desired)
 # dnf5 remove -y @kde-desktop
