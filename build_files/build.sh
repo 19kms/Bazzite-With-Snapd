@@ -2,11 +2,7 @@
 
 set -ouex pipefail
 
-### Install packages
-
-# Packages can be installed from any enabled yum repo on the image.
-# RPMfusion repos are available by default in ublue main images.
-
+### Install required packages
 dnf5 install -y \
   curl \
   unzip \
@@ -15,8 +11,20 @@ dnf5 install -y \
   papirus-icon-theme \
   waydroid
 
-### GNOME extensions
+### Remove KDE/Plasma packages
+dnf5 remove -y \
+  kde-* \
+  plasma-* \
+  kdeconnect \
+  kdeclarative \
+  kwin* \
+  konsole \
+  dolphin \
+  korganizer \
+  kmail \
+  kaddressbook || true
 
+### Install GNOME extensions
 EXTDIR="/usr/share/gnome-shell/extensions"
 mkdir -p "$EXTDIR"
 
@@ -37,11 +45,11 @@ install_extension_from_repo() {
       local fallback_url="https://github.com/${repo}/archive/${fallback_ref}.zip"
       echo "Primary download failed for ${extension_id}, trying fallback ref ${fallback_ref}"
       if ! curl -fsSL -o "$archive_path" "$fallback_url"; then
-        echo "Skipping extension ${extension_id}: failed to download ${archive_url} and fallback ${fallback_url}"
+        echo "Skipping extension ${extension_id}: failed to download"
         return 0
       fi
     else
-      echo "Skipping extension ${extension_id}: failed to download ${archive_url}"
+      echo "Skipping extension ${extension_id}: failed to download"
       return 0
     fi
   fi
@@ -50,14 +58,14 @@ install_extension_from_repo() {
   mkdir -p "$archive_root"
 
   if ! unzip -q "$archive_path" -d "$archive_root"; then
-    echo "Skipping extension ${extension_id}: failed to unzip ${archive_path}"
+    echo "Skipping extension ${extension_id}: failed to unzip"
     return 0
   fi
 
   local extension_path
   extension_path="$(find "$archive_root" -type d -name "$extension_id" -print -quit)"
   if [[ -z "$extension_path" ]]; then
-    echo "Skipping extension ${extension_id}: extension directory was not found in archive"
+    echo "Skipping extension ${extension_id}: not found in archive"
     return 0
   fi
 
@@ -68,6 +76,7 @@ install_extension_from_repo() {
   fi
 }
 
+# Install GNOME Shell extensions
 install_extension_from_repo "$LOGO_MENU_REPO" "$LOGO_MENU_REF" "logomenu@aryan_k" "$LOGO_MENU_FALLBACK_REF"
 install_extension_from_repo "$COMPIZ_WINDOWS_EFFECT_REPO" "$COMPIZ_WINDOWS_EFFECT_REF" "compiz-windows-effect@hermes83.github.com"
 install_extension_from_repo "$COMPIZ_MAGIC_LAMP_REPO" "$COMPIZ_MAGIC_LAMP_REF" "compiz-alike-magic-lamp-effect@hermes83.github.com"
@@ -81,8 +90,9 @@ install_extension_from_repo "$DESKTOP_CUBE_REPO" "$DESKTOP_CUBE_REF" "desktop-cu
 install_extension_from_repo "$BLUR_MY_SHELL_REPO" "$BLUR_MY_SHELL_REF" "blur-my-shell@aunetx"
 install_extension_from_repo "$BAZAAR_INTEGRATION_REPO" "$BAZAAR_INTEGRATION_REF" "bazaar-integration@kolunmi.github.io"
 
-# Set default enabled extensions system-wide via dconf defaults.
+### Configure GNOME defaults
 mkdir -p /etc/dconf/db/local.d
+
 cat > /etc/dconf/db/local.d/00-gnome-shell-extensions << 'EOF'
 [org/gnome/shell]
 enabled-extensions=['hotedge@jonathan.jdoda.ca','appindicatorsupport@rgcjonas.gmail.com','blur-my-shell@aunetx','logomenu@aryan_k','restartto@tiagoporsch.github.io']
@@ -100,9 +110,7 @@ EOF
 
 dconf update
 
-### Runtime services and compatibility setup
-
-# Required for snapd runtime support.
+### Configure snapd
 mkdir -p /var/lib/snapd
 ln -sfn /var/lib/snapd/snap /snap
 systemctl enable snapd.socket
@@ -110,10 +118,10 @@ if systemctl list-unit-files | grep -q '^snapd.apparmor.service'; then
   systemctl enable snapd.apparmor.service
 fi
 
-# Enable waydroid runtime service.
+### Configure waydroid
 systemctl enable waydroid-container.service || systemctl enable waydroid-container
 
-# Install GPU-aware image switch helper and run it automatically at boot.
+### Configure GPU auto-switching
 install -m 0755 /ctx/scripts/switch-image-by-gpu.sh /usr/bin/switch-image-by-gpu.sh
 
 cat > /usr/lib/systemd/system/bootc-gpu-auto-switch.service << 'EOF'
@@ -134,5 +142,5 @@ EOF
 
 systemctl enable bootc-gpu-auto-switch.service
 
-# Remove restrictive package-installation polkit rules.
+### Remove restrictive polkit rules
 rm -f /etc/polkit-1/rules.d/*package* /etc/polkit-1/rules.d/*rpm*
