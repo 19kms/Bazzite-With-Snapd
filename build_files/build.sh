@@ -19,9 +19,14 @@ dnf5 install -y \
   gnome-session \
   gnome-settings-daemon \
   gnome-software \
-  akmod-nvidia \
-  xorg-x11-drv-nvidia-cuda \
   waydroid
+
+if dnf5 repoquery akmod-nvidia >/dev/null 2>&1 && dnf5 repoquery xorg-x11-drv-nvidia-cuda >/dev/null 2>&1; then
+  dnf5 install -y akmod-nvidia xorg-x11-drv-nvidia-cuda
+else
+  echo "NVIDIA packages are not available in enabled repos for this base image; skipping NVIDIA install."
+  echo "Use an NVIDIA base image variant if you need nvidia-smi available by default."
+fi
 
 ### GNOME extensions
 
@@ -73,6 +78,28 @@ fi
 
 # Enable waydroid runtime service.
 systemctl enable waydroid-container.service || systemctl enable waydroid-container
+
+# Install GPU-aware image switch helper and run it automatically on first boot.
+install -D -m 0755 /ctx/scripts/switch-image-by-gpu.sh /usr/local/bin/switch-image-by-gpu.sh
+
+cat > /usr/lib/systemd/system/bootc-gpu-auto-switch.service << 'EOF'
+[Unit]
+Description=Auto switch bootc image based on GPU vendor on first boot
+Wants=network-online.target
+After=network-online.target
+ConditionFirstBoot=yes
+
+[Service]
+Type=oneshot
+TimeoutStartSec=90
+Environment=AUTO_REBOOT=1
+ExecStart=/usr/bin/timeout 90 /usr/bin/bash /usr/local/bin/switch-image-by-gpu.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable bootc-gpu-auto-switch.service
 
 # Remove restrictive package-installation polkit rules.
 rm -f /etc/polkit-1/rules.d/*package* /etc/polkit-1/rules.d/*rpm*

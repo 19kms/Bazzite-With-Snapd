@@ -27,8 +27,22 @@ concurrency:
 
 jobs:
   build_push:
-    name: Build and push image
+    name: Build and push image (${{ matrix.variant.name }})
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        variant:
+          - name: standard
+            containerfile: ./Containerfile
+            default_tag: latest
+          - name: nvidia
+            containerfile: ./Containerfile.nvidia
+            default_tag: nvidia
+
+    env:
+      DEFAULT_TAG: ${{ matrix.variant.default_tag }}
+      CONTAINERFILE: ${{ matrix.variant.containerfile }}
 
     permissions:
       contents: read
@@ -97,7 +111,7 @@ jobs:
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2
         with:
           containerfiles: |
-            ./Containerfile
+            ${{ env.CONTAINERFILE }}
           # Postfix image name with -custom to make it a little more descriptive
           # Syntax: https://docs.github.com/en/actions/learn-github-actions/expressions#format
           image: ${{ env.IMAGE_NAME }}

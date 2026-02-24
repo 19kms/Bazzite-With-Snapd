@@ -120,11 +120,42 @@ sudo bootc switch ghcr.io/<username>/<image_name>
 ```
 This should queue your image for the next reboot, which you can do immediately after the command finishes. You have officially set up your custom image! See the following section for an explanation of the important parts of the template for customization.
 
+### Optional: Automatic NVIDIA vs Standard Switching
+
+This repo publishes two image variants:
+
+- `ghcr.io/<username>/<image_name>:latest` (standard)
+- `ghcr.io/<username>/<image_name>:nvidia` (NVIDIA base variant)
+
+To automatically pick the correct one based on detected GPU:
+
+```bash
+bash scripts/switch-image-by-gpu.sh <username>/<image_name>
+```
+
+Example:
+
+```bash
+bash scripts/switch-image-by-gpu.sh 19kms/bazzite-with-snapd
+```
+
+If NVIDIA hardware is detected via `lspci`, it switches to the `nvidia` tag; otherwise it switches to `latest`.
+
+This is also configured to run automatically on first boot of the installed image via a systemd unit. On systems with NVIDIA GPUs, the first boot will queue a switch to the `nvidia` tag and reboot once automatically. The first-boot auto-switch has a safety timeout so it will not hold boot for long on bad/no network.
+
+You can still run it manually later:
+
+```bash
+bash scripts/switch-image-by-gpu.sh <username>/<image_name> [standard-tag] [nvidia-tag]
+```
+
 # Repository Contents
 
 ## Containerfile
 
 The [Containerfile](./Containerfile) defines the operations used to customize the selected image.This file is the entrypoint for your image build, and works exactly like a regular podman Containerfile. For reference, please see the [Podman Documentation](https://docs.podman.io/en/latest/Introduction.html).
+
+For NVIDIA-specific builds, this repo also includes [Containerfile.nvidia](./Containerfile.nvidia), which uses an NVIDIA-flavored Bazzite base image.
 
 ## build.sh
 
