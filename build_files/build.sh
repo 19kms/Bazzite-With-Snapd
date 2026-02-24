@@ -12,14 +12,6 @@ dnf5 install -y \
   unzip \
   pciutils \
   snapd \
-  gnome-shell \
-  gdm \
-  gnome-control-center \
-  gnome-terminal \
-  nautilus \
-  gnome-session \
-  gnome-settings-daemon \
-  gnome-software \
   waydroid
 
 ### GNOME extensions

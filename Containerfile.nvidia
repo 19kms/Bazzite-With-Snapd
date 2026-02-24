@@ -4,7 +4,7 @@ COPY build_files /
 COPY scripts /scripts
 
 # NVIDIA Base Image
-FROM ghcr.io/ublue-os/bazzite-nvidia:stable
+FROM ghcr.io/ublue-os/bazzite-gnome-nvidia:stable
 
 ### [IM]MUTABLE /opt
 ## Some bootable images, like Fedora, have /opt symlinked to /var/opt, in order to
