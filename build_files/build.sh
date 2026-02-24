@@ -4,16 +4,10 @@ set -ouex pipefail
 
 ### Install required packages
 dnf5 install -y \
-  curl \
-  unzip \
-  pciutils \
   snapd \
   papirus-icon-theme \
-  waydroid \
   gnome-shell-extension-appindicator \
-  network-manager-applet \
-  NetworkManager-openvpn \
-  NetworkManager-wireguard
+  network-manager-applet
 
 ### Remove KDE/Plasma packages
 # List all KDE/Plasma packages and remove them
