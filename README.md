@@ -161,7 +161,7 @@ For NVIDIA-specific builds, this repo also includes [Containerfile.nvidia](./Con
 
 The [build.sh](./build_files/build.sh) file is called from your Containerfile. It is the best place to install new packages or make any other customization to your system. There are customization examples contained within it for your perusal.
 
-If you need NVIDIA tooling such as `nvidia-smi`, avoid GPU detection at image build time (for example using `lspci`) because CI/container builds usually cannot see host GPU hardware. Install the NVIDIA packages unconditionally in `build.sh` or use an NVIDIA base image variant.
+If you need NVIDIA tooling such as `nvidia-smi`, avoid GPU detection at image build time (for example using `lspci`) because CI/container builds usually cannot see host GPU hardware. Use a dedicated NVIDIA base image variant (this repo provides `:nvidia`) rather than trying to detect/install NVIDIA packages in shared build scripts.
 
 ## build.yml
 

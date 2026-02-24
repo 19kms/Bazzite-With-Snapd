@@ -21,13 +21,6 @@ dnf5 install -y \
   gnome-software \
   waydroid
 
-if dnf5 repoquery akmod-nvidia >/dev/null 2>&1 && dnf5 repoquery xorg-x11-drv-nvidia-cuda >/dev/null 2>&1; then
-  dnf5 install -y akmod-nvidia xorg-x11-drv-nvidia-cuda
-else
-  echo "NVIDIA packages are not available in enabled repos for this base image; skipping NVIDIA install."
-  echo "Use an NVIDIA base image variant if you need nvidia-smi available by default."
-fi
-
 ### GNOME extensions
 
 EXTDIR="/usr/share/gnome-shell/extensions"
