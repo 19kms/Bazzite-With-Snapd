@@ -12,6 +12,7 @@ dnf5 install -y \
   unzip \
   pciutils \
   snapd \
+  papirus-icon-theme \
   waydroid
 
 ### GNOME extensions
@@ -92,7 +93,7 @@ cat > /etc/dconf/db/local.d/01-gnome-ui-defaults << 'EOF'
 button-layout=':minimize,maximize,close'
 
 [org/gnome/desktop/interface]
-icon-theme='Adwaita'
+icon-theme='Papirus'
 EOF
 
 dconf update
