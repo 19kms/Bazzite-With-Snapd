@@ -1,50 +1,78 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 set -ouex pipefail
 
 ### Install packages
 
 # Packages can be installed from any enabled yum repo on the image.
-# RPMfusion repos are available by default in ublue main images
-# List of rpmfusion packages can be found here:
-# https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/43/x86_64/repoview/index.html&protocol=https&redirect=1
+# RPMfusion repos are available by default in ublue main images.
 
+dnf5 install -y \
+  curl \
+  unzip \
+  snapd \
+  gnome-shell \
+  gdm \
+  gnome-control-center \
+  gnome-terminal \
+  nautilus \
+  gnome-session \
+  gnome-settings-daemon \
+  gnome-software \
+  akmod-nvidia \
+  xorg-x11-drv-nvidia-cuda \
+  waydroid
 
-# Install snapd for snap package support
-dnf5 install -y snapd
+### GNOME extensions
 
-# Create snapd socket directory (required for snap to function properly)
+EXTDIR="/usr/share/gnome-shell/extensions"
+mkdir -p "$EXTDIR"
+
+install_extension_zip() {
+  local archive_url="$1"
+  local unpack_dir="$2"
+  local extension_id="$3"
+
+  local archive_path="/tmp/${extension_id}.zip"
+  curl -fsSL -o "$archive_path" "$archive_url"
+  unzip -q "$archive_path" -d /tmp/
+  cp -r "/tmp/${unpack_dir}/${extension_id}" "$EXTDIR/"
+}
+
+install_extension_zip "https://github.com/aryan02420/Logo-menu/archive/refs/heads/main.zip" "Logo-menu-main" "logomenu@aryan_k"
+install_extension_zip "https://github.com/hermes83/compiz-windows-effect/archive/refs/heads/main.zip" "compiz-windows-effect-main" "compiz-windows-effect@hermes83.github.com"
+install_extension_zip "https://github.com/hermes83/compiz-alike-magic-lamp-effect/archive/refs/heads/main.zip" "compiz-alike-magic-lamp-effect-main" "compiz-alike-magic-lamp-effect@hermes83.github.com"
+install_extension_zip "https://github.com/jdoda/hotedge/archive/refs/heads/main.zip" "hotedge-main" "hotedge@jonathan.jdoda.ca"
+install_extension_zip "https://github.com/tiagoporsch/restartto/archive/refs/heads/main.zip" "restartto-main" "restartto@tiagoporsch.github.io"
+install_extension_zip "https://github.com/ubuntu/gnome-shell-extension-appindicator/archive/refs/heads/main.zip" "gnome-shell-extension-appindicator-main" "appindicatorsupport@rgcjonas.gmail.com"
+install_extension_zip "https://github.com/skullbite/gnome-add-to-steam/archive/refs/heads/main.zip" "gnome-add-to-steam-main" "add-to-steam@pupper.space"
+install_extension_zip "https://github.com/eonpatapon/gnome-shell-extension-caffeine/archive/refs/heads/master.zip" "gnome-shell-extension-caffeine-master" "caffeine@patapon.info"
+install_extension_zip "https://github.com/SchegolevIvan/burn-my-windows/archive/refs/heads/main.zip" "burn-my-windows-main" "burn-my-windows@schneegans.github.com"
+install_extension_zip "https://github.com/Schneegans/Desktop-Cube/archive/refs/heads/main.zip" "Desktop-Cube-main" "desktop-cube@schneegans.github.com"
+install_extension_zip "https://github.com/aunetx/blur-my-shell/archive/refs/heads/master.zip" "blur-my-shell-master" "blur-my-shell@aunetx"
+install_extension_zip "https://github.com/kolunmi/bazaar-integration/archive/refs/heads/main.zip" "bazaar-integration-main" "bazaar-integration@kolunmi.github.io"
+
+# Set default enabled extensions system-wide via dconf defaults.
+mkdir -p /etc/dconf/db/local.d
+cat > /etc/dconf/db/local.d/00-gnome-shell-extensions << 'EOF'
+[org/gnome/shell]
+enabled-extensions=['hotedge@jonathan.jdoda.ca','appindicatorsupport@rgcjonas.gmail.com','blur-my-shell@aunetx','logomenu@aryan_k','restartto@tiagoporsch.github.io']
+EOF
+
+dconf update
+
+### Runtime services and compatibility setup
+
+# Required for snapd runtime support.
 mkdir -p /var/lib/snapd
+ln -sfn /var/lib/snapd/snap /snap
+systemctl enable snapd.socket
+if systemctl list-unit-files | grep -q '^snapd.apparmor.service'; then
+  systemctl enable snapd.apparmor.service
+fi
 
+# Enable waydroid runtime service.
+systemctl enable waydroid-container.service || systemctl enable waydroid-container
 
-# Install core GNOME desktop packages instead of KDE
-dnf5 install -y gnome-shell gdm gnome-control-center gnome-terminal nautilus gnome-session gnome-settings-daemon gnome-software
-
-# Optionally, remove KDE if present (uncomment if desired)
-# dnf5 remove -y @kde-desktop
-
-# Install and initialize waydroid (Android container)
-dnf5 install -y waydroid
-# Enable waydroid service
-systemctl enable waydroid-container
-
-
-
-# Use a COPR Example:
-#
-# dnf5 -y copr enable ublue-os/staging
-# dnf5 -y install package
-# Disable COPRs so they don't end up enabled on the final image:
-# dnf5 -y copr disable ublue-os/staging
-
-
-#### Example for enabling a System Unit File
-
-## Commented out to test boot reliability
-# systemctl enable snapd.socket
-# systemctl enable snapd.apparmor.service
-# systemctl enable podman.socket
-
-# Remove the "short leash" restrictions to allow unrestricted dnf/package installation
-# This removes polkit rules that prevent interactive package installation
+# Remove restrictive package-installation polkit rules.
 rm -f /etc/polkit-1/rules.d/*package* /etc/polkit-1/rules.d/*rpm*

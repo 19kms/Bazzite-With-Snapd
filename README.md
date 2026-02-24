@@ -130,6 +130,8 @@ The [Containerfile](./Containerfile) defines the operations used to customize th
 
 The [build.sh](./build_files/build.sh) file is called from your Containerfile. It is the best place to install new packages or make any other customization to your system. There are customization examples contained within it for your perusal.
 
+If you need NVIDIA tooling such as `nvidia-smi`, avoid GPU detection at image build time (for example using `lspci`) because CI/container builds usually cannot see host GPU hardware. Install the NVIDIA packages unconditionally in `build.sh` or use an NVIDIA base image variant.
+
 ## build.yml
 
 The [build.yml](./.github/workflows/build.yml) Github Actions workflow creates your custom OCI image and publishes it to the Github Container Registry (GHCR). By default, the image name will match the Github repository name. There are several environment variables at the start of the workflow which may be of interest to change.
