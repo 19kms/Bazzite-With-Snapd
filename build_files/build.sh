@@ -87,6 +87,14 @@ cat > /etc/dconf/db/local.d/00-gnome-shell-extensions << 'EOF'
 enabled-extensions=['hotedge@jonathan.jdoda.ca','appindicatorsupport@rgcjonas.gmail.com','blur-my-shell@aunetx','logomenu@aryan_k','restartto@tiagoporsch.github.io']
 EOF
 
+cat > /etc/dconf/db/local.d/01-gnome-ui-defaults << 'EOF'
+[org/gnome/desktop/wm/preferences]
+button-layout=':minimize,maximize,close'
+
+[org/gnome/desktop/interface]
+icon-theme='Adwaita'
+EOF
+
 dconf update
 
 ### Runtime services and compatibility setup
