@@ -116,3 +116,60 @@ The image build compiles schemas for installed extensions. If needed on a live s
 glib-compile-schemas ~/.local/share/gnome-shell/extensions/<extension-id>/schemas
 ```
 
+## Waydroid
+
+Waydroid is preinstalled and initialized on first boot with Google Apps (GAPPS).
+
+### First Boot Initialization
+
+- Runs automatically via `waydroid-first-init.service` after reboot
+- Fixes LXC architecture placeholder (`LXCARCH` → `x86_64`)
+- Configures DNS (8.8.8.8, 8.8.4.4) for Google Play Store connectivity
+- Logs detailed output to `/var/log/waydroid-init.log`
+
+### Server Fallback
+
+If the official GAPPS server (`ota.waydro.id`) is unavailable:
+1. Automatically falls back to amstel-dev vanilla server (Android 13)
+2. On vanilla fallback, GApps installation info is logged
+3. You can manually install GApps later as needed
+
+### Manual GApps Installation (if needed)
+
+If using vanilla image without GAPPS, install GApps with BiTGApps:
+
+```bash
+# Download BiTGApps for Lineage 20 (Android 13)
+# https://bitgapps.github.io/
+
+# Extract and install:
+waydroid session stop
+cd /path/to/extracted/bitgapps
+./install.sh /var/lib/waydroid/rootfs/system
+waydroid session start
+```
+
+### Troubleshooting Waydroid
+
+**Check initialization status:**
+```bash
+cat /var/log/waydroid-init.log
+```
+
+**Check container health:**
+```bash
+waydroid-check
+```
+
+**Manually verify DNS:**
+```bash
+sudo waydroid shell getprop net.dns1
+```
+
+Should return `8.8.8.8`. If empty, DNS wasn't applied - check `/var/log/waydroid-init.log`.
+
+**Container frozen:**
+```bash
+sudo lxc-unfreeze -P /var/lib/waydroid/lxc -n waydroid
+```
+
