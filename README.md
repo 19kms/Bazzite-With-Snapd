@@ -116,13 +116,3 @@ The image build compiles schemas for installed extensions. If needed on a live s
 glib-compile-schemas ~/.local/share/gnome-shell/extensions/<extension-id>/schemas
 ```
 
-## Development
-
-Commit and push changes:
-
-```bash
-git add -A
-git commit -m "Update custom image config"
-git push origin main
-```
-
