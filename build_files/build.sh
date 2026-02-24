@@ -122,8 +122,18 @@ ConditionPathExists=!/var/lib/waydroid/.initialized
 [Service]
 Type=oneshot
 ExecStartPre=/usr/bin/mkdir -p /var/lib/waydroid
-ExecStart=/usr/bin/waydroid init -s GAPPS -f -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor
-ExecStartPost=/usr/bin/touch /var/lib/waydroid/.initialized
+ExecStart=/usr/bin/bash -c '\
+  /usr/bin/waydroid init -s GAPPS -f -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor || true; \
+  if [[ -f /var/lib/waydroid/lxc/waydroid/config ]]; then \
+    /usr/bin/sed -i "s/LXCARCH/x86_64/g" /var/lib/waydroid/lxc/waydroid/config; \
+  fi; \
+  if [[ -f /var/lib/waydroid/images/system.img && -f /var/lib/waydroid/images/vendor.img && -f /var/lib/waydroid/lxc/waydroid/config ]]; then \
+    if ! /usr/bin/grep -q "LXCARCH" /var/lib/waydroid/lxc/waydroid/config; then \
+      /usr/bin/touch /var/lib/waydroid/.initialized; \
+      exit 0; \
+    fi; \
+  fi; \
+  exit 1'
 RemainAfterExit=yes
 Restart=on-failure
 RestartSec=60
