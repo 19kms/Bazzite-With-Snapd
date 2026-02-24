@@ -69,6 +69,10 @@ install_extension_from_repo() {
   fi
 
   cp -r "$extension_path" "$EXTDIR/"
+
+  if [[ -d "$EXTDIR/$extension_id/schemas" ]]; then
+    glib-compile-schemas "$EXTDIR/$extension_id/schemas" || true
+  fi
 }
 
 install_extension_from_repo "$LOGO_MENU_REPO" "$LOGO_MENU_REF" "logomenu@aryan_k" "$LOGO_MENU_FALLBACK_REF"
