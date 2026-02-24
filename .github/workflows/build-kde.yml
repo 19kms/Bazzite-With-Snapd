@@ -1,5 +1,5 @@
 ---
-name: Build GNOME container image
+name: Build KDE container image
 on:
   pull_request:
     branches:
@@ -10,12 +10,11 @@ on:
     branches:
       - main
     paths:
-      - 'build_files/build.sh'
-      - 'Containerfile'
-      - 'Containerfile.nvidia'
-      - 'build_files/gnome-extension-refs.env'
+      - 'build_files/KDE-build.sh'
+      - 'Containerfile.kde'
+      - 'Containerfile.kde.nvidia'
       - 'scripts/**'
-      - '.github/workflows/build.yml'
+      - '.github/workflows/build-kde.yml'
   workflow_dispatch:
 
 env:
@@ -38,12 +37,12 @@ jobs:
       fail-fast: false
       matrix:
         variant:
-          - name: standard
-            containerfile: ./Containerfile
-            default_tag: latest
-          - name: nvidia
-            containerfile: ./Containerfile.nvidia
-            default_tag: nvidia
+          - name: kde
+            containerfile: ./Containerfile.kde
+            default_tag: kde
+          - name: kde-nvidia
+            containerfile: ./Containerfile.kde.nvidia
+            default_tag: kde.nvidia
 
     env:
       DEFAULT_TAG: ${{ matrix.variant.default_tag }}
