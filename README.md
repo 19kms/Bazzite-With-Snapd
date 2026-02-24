@@ -163,6 +163,8 @@ The [build.sh](./build_files/build.sh) file is called from your Containerfile. I
 
 If you need NVIDIA tooling such as `nvidia-smi`, avoid GPU detection at image build time (for example using `lspci`) because CI/container builds usually cannot see host GPU hardware. Use a dedicated NVIDIA base image variant (this repo provides `:nvidia`) rather than trying to detect/install NVIDIA packages in shared build scripts.
 
+GNOME extension sources are centrally defined in [build_files/gnome-extension-refs.env](./build_files/gnome-extension-refs.env). `build.sh` installs extensions from those pinned refs, and Renovate is configured to open PRs when those refs update.
+
 ## build.yml
 
 The [build.yml](./.github/workflows/build.yml) Github Actions workflow creates your custom OCI image and publishes it to the Github Container Registry (GHCR). By default, the image name will match the Github repository name. There are several environment variables at the start of the workflow which may be of interest to change.

@@ -16,6 +16,17 @@
     "every weekend"
   ],
   "automerge": false,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "^build_files/gnome-extension-refs\\.env$"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n[A-Z0-9_]+_REF=(?<currentValue>\\S+)"
+      ]
+    }
+  ],
   "pruneStaleBranches": true,
   "prConcurrentLimit": 3,
   "semanticCommits": true

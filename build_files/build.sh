@@ -26,29 +26,62 @@ dnf5 install -y \
 EXTDIR="/usr/share/gnome-shell/extensions"
 mkdir -p "$EXTDIR"
 
-install_extension_zip() {
-  local archive_url="$1"
-  local unpack_dir="$2"
-  local extension_id="$3"
+source /ctx/gnome-extension-refs.env
 
-  local archive_path="/tmp/${extension_id}.zip"
-  curl -fsSL -o "$archive_path" "$archive_url"
-  unzip -q "$archive_path" -d /tmp/
-  cp -r "/tmp/${unpack_dir}/${extension_id}" "$EXTDIR/"
+install_extension_from_repo() {
+  local repo="$1"
+  local ref="$2"
+  local extension_id="$3"
+  local fallback_ref="${4:-}"
+
+  local archive_url="https://github.com/${repo}/archive/${ref}.zip"
+  local archive_root="/tmp/ext-${extension_id}"
+  local archive_path="${archive_root}.zip"
+
+  if ! curl -fsSL -o "$archive_path" "$archive_url"; then
+    if [[ -n "$fallback_ref" ]]; then
+      local fallback_url="https://github.com/${repo}/archive/${fallback_ref}.zip"
+      echo "Primary download failed for ${extension_id}, trying fallback ref ${fallback_ref}"
+      if ! curl -fsSL -o "$archive_path" "$fallback_url"; then
+        echo "Skipping extension ${extension_id}: failed to download ${archive_url} and fallback ${fallback_url}"
+        return 0
+      fi
+    else
+      echo "Skipping extension ${extension_id}: failed to download ${archive_url}"
+      return 0
+    fi
+  fi
+
+  rm -rf "$archive_root"
+  mkdir -p "$archive_root"
+
+  if ! unzip -q "$archive_path" -d "$archive_root"; then
+    echo "Skipping extension ${extension_id}: failed to unzip ${archive_path}"
+    return 0
+  fi
+
+  local extension_path
+  extension_path="$(find "$archive_root" -type d -name "$extension_id" -print -quit)"
+  if [[ -z "$extension_path" ]]; then
+    echo "Skipping extension ${extension_id}: extension directory was not found in archive"
+    return 0
+  fi
+
+  cp -r "$extension_path" "$EXTDIR/"
 }
 
-install_extension_zip "https://github.com/aryan02420/Logo-menu/archive/refs/heads/main.zip" "Logo-menu-main" "logomenu@aryan_k"
-install_extension_zip "https://github.com/hermes83/compiz-windows-effect/archive/refs/heads/main.zip" "compiz-windows-effect-main" "compiz-windows-effect@hermes83.github.com"
-install_extension_zip "https://github.com/hermes83/compiz-alike-magic-lamp-effect/archive/refs/heads/main.zip" "compiz-alike-magic-lamp-effect-main" "compiz-alike-magic-lamp-effect@hermes83.github.com"
-install_extension_zip "https://github.com/jdoda/hotedge/archive/refs/heads/main.zip" "hotedge-main" "hotedge@jonathan.jdoda.ca"
-install_extension_zip "https://github.com/tiagoporsch/restartto/archive/refs/heads/main.zip" "restartto-main" "restartto@tiagoporsch.github.io"
-install_extension_zip "https://github.com/ubuntu/gnome-shell-extension-appindicator/archive/refs/heads/main.zip" "gnome-shell-extension-appindicator-main" "appindicatorsupport@rgcjonas.gmail.com"
-install_extension_zip "https://github.com/skullbite/gnome-add-to-steam/archive/refs/heads/main.zip" "gnome-add-to-steam-main" "add-to-steam@pupper.space"
-install_extension_zip "https://github.com/eonpatapon/gnome-shell-extension-caffeine/archive/refs/heads/master.zip" "gnome-shell-extension-caffeine-master" "caffeine@patapon.info"
-install_extension_zip "https://github.com/SchegolevIvan/burn-my-windows/archive/refs/heads/main.zip" "burn-my-windows-main" "burn-my-windows@schneegans.github.com"
-install_extension_zip "https://github.com/Schneegans/Desktop-Cube/archive/refs/heads/main.zip" "Desktop-Cube-main" "desktop-cube@schneegans.github.com"
-install_extension_zip "https://github.com/aunetx/blur-my-shell/archive/refs/heads/master.zip" "blur-my-shell-master" "blur-my-shell@aunetx"
-install_extension_zip "https://github.com/kolunmi/bazaar-integration/archive/refs/heads/main.zip" "bazaar-integration-main" "bazaar-integration@kolunmi.github.io"
+install_extension_from_repo "$LOGO_MENU_REPO" "$LOGO_MENU_REF" "logomenu@aryan_k" "$LOGO_MENU_FALLBACK_REF"
+install_extension_from_repo "$COMPIZ_WINDOWS_EFFECT_REPO" "$COMPIZ_WINDOWS_EFFECT_REF" "compiz-windows-effect@hermes83.github.com"
+install_extension_from_repo "$COMPIZ_MAGIC_LAMP_REPO" "$COMPIZ_MAGIC_LAMP_REF" "compiz-alike-magic-lamp-effect@hermes83.github.com"
+install_extension_from_repo "$HOTEDGE_REPO" "$HOTEDGE_REF" "hotedge@jonathan.jdoda.ca"
+install_extension_from_repo "$RESTARTTO_REPO" "$RESTARTTO_REF" "restartto@tiagoporsch.github.io"
+install_extension_from_repo "$APPINDICATOR_REPO" "$APPINDICATOR_REF" "appindicatorsupport@rgcjonas.gmail.com"
+install_extension_from_repo "$ADD_TO_STEAM_REPO" "$ADD_TO_STEAM_REF" "add-to-steam@pupper.space"
+install_extension_from_repo "$CAFFEINE_REPO" "$CAFFEINE_REF" "caffeine@patapon.info"
+install_extension_from_repo "$BURN_MY_WINDOWS_REPO" "$BURN_MY_WINDOWS_REF" "burn-my-windows@schneegans.github.com"
+install_extension_from_repo "$DESKTOP_CUBE_REPO" "$DESKTOP_CUBE_REF" "desktop-cube@schneegans.github.com"
+install_extension_from_repo "$BLUR_MY_SHELL_REPO" "$BLUR_MY_SHELL_REF" "blur-my-shell@aunetx"
+install_extension_from_repo "$BAZAAR_INTEGRATION_REPO" "$BAZAAR_INTEGRATION_REF" "bazaar-integration@kolunmi.github.io"
 
 # Set default enabled extensions system-wide via dconf defaults.
 mkdir -p /etc/dconf/db/local.d
