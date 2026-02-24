@@ -9,20 +9,16 @@ dnf5 install -y \
   pciutils \
   snapd \
   papirus-icon-theme \
-  waydroid
+  waydroid \
+  gnome-shell-extension-appindicator \
+  network-manager-applet \
+  NetworkManager-openvpn \
+  NetworkManager-wireguard
 
 ### Remove KDE/Plasma packages
+# List all KDE/Plasma packages and remove them
 dnf5 remove -y \
-  kde-* \
-  plasma-* \
-  kdeconnect \
-  kdeclarative \
-  kwin* \
-  konsole \
-  dolphin \
-  korganizer \
-  kmail \
-  kaddressbook || true
+  $(rpm -qa | grep -E '^(kde-|plasma-|kwin|konsole|dolphin)') || true
 
 ### Install GNOME extensions
 EXTDIR="/usr/share/gnome-shell/extensions"
