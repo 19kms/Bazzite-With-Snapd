@@ -111,6 +111,25 @@ fi
 ### Configure waydroid
 systemctl enable waydroid-container.service || systemctl enable waydroid-container
 
+# Create first-boot initialization service for Waydroid
+cat > /usr/lib/systemd/system/waydroid-first-init.service << 'EOF'
+[Unit]
+Description=Initialize Waydroid with GAPPS on first boot
+After=waydroid-container.service
+ConditionPathExists=!/var/lib/waydroid/.initialized
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/waydroid init -s GAPPS -f --system_ota https://ota.waydro.id/system --vendor_ota https://ota.waydro.id/vendor
+ExecStartPost=/usr/bin/touch /var/lib/waydroid/.initialized
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable waydroid-first-init.service
+
 ### Configure GPU auto-switching
 install -m 0755 /ctx/scripts/switch-image-by-gpu.sh /usr/bin/switch-image-by-gpu.sh
 
