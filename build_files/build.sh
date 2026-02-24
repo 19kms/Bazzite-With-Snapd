@@ -10,6 +10,7 @@ set -ouex pipefail
 dnf5 install -y \
   curl \
   unzip \
+  pciutils \
   snapd \
   gnome-shell \
   gdm \

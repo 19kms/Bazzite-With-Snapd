@@ -10,6 +10,22 @@ usage() {
 standard_tag="${2:-latest}"
 nvidia_tag="${3:-nvidia}"
 
+has_nvidia_gpu() {
+  if compgen -G '/sys/class/drm/card*/device/vendor' > /dev/null; then
+    if grep -qi '^0x10de$' /sys/class/drm/card*/device/vendor 2>/dev/null; then
+      return 0
+    fi
+  fi
+
+  if command -v lspci >/dev/null 2>&1; then
+    if lspci -nn | grep -Eiq 'VGA|3D|Display' && lspci -nn | grep -iq '10de|nvidia'; then
+      return 0
+    fi
+  fi
+
+  return 1
+}
+
 if [[ $# -ge 1 ]]; then
   base_ref="ghcr.io/$1"
   current_tag=""
@@ -37,7 +53,7 @@ else
 fi
 
 selected_tag="$standard_tag"
-if command -v lspci >/dev/null 2>&1 && lspci | grep -Eiq 'VGA|3D|Display' && lspci | grep -iq nvidia; then
+if has_nvidia_gpu; then
   selected_tag="$nvidia_tag"
 fi
 
