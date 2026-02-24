@@ -39,6 +39,12 @@ jobs:
           - name: nvidia
             containerfile: ./Containerfile.nvidia
             default_tag: nvidia
+          - name: kde
+            containerfile: ./Containerfile.kde
+            default_tag: kde
+          - name: kde-nvidia
+            containerfile: ./Containerfile.kde.nvidia
+            default_tag: kde.nvidia
 
     env:
       DEFAULT_TAG: ${{ matrix.variant.default_tag }}
