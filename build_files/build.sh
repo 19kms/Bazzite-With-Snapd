@@ -34,21 +34,27 @@ install_extension_from_repo() {
   local extension_id="$3"
   local fallback_ref="${4:-}"
 
-  local archive_url="https://github.com/${repo}/archive/${ref}.zip"
+  local archive_url="https://github.com/${repo}/archive/refs/heads/${ref}.zip"
+  local archive_url_alt="https://github.com/${repo}/archive/${ref}.zip"
   local archive_root="/tmp/ext-${extension_id}"
   local archive_path="${archive_root}.zip"
 
   if ! curl -fsSL -o "$archive_path" "$archive_url"; then
-    if [[ -n "$fallback_ref" ]]; then
-      local fallback_url="https://github.com/${repo}/archive/${fallback_ref}.zip"
-      echo "Primary download failed for ${extension_id}, trying fallback ref ${fallback_ref}"
-      if ! curl -fsSL -o "$archive_path" "$fallback_url"; then
-        echo "Skipping extension ${extension_id}: failed to download ${archive_url} and fallback ${fallback_url}"
+    if ! curl -fsSL -o "$archive_path" "$archive_url_alt"; then
+      if [[ -n "$fallback_ref" ]]; then
+        local fallback_url="https://github.com/${repo}/archive/refs/heads/${fallback_ref}.zip"
+        local fallback_url_alt="https://github.com/${repo}/archive/${fallback_ref}.zip"
+        echo "Primary download failed for ${extension_id}, trying fallback ref ${fallback_ref}"
+        if ! curl -fsSL -o "$archive_path" "$fallback_url"; then
+          if ! curl -fsSL -o "$archive_path" "$fallback_url_alt"; then
+            echo "Skipping extension ${extension_id}: failed to download ${archive_url} and fallback ${fallback_url}"
+            return 0
+          fi
+        fi
+      else
+        echo "Skipping extension ${extension_id}: failed to download ${archive_url}"
         return 0
       fi
-    else
-      echo "Skipping extension ${extension_id}: failed to download ${archive_url}"
-      return 0
     fi
   fi
 
@@ -106,7 +112,7 @@ fi
 systemctl enable waydroid-container.service || systemctl enable waydroid-container
 
 # Install GPU-aware image switch helper and run it automatically on first boot.
-install -D -m 0755 /ctx/scripts/switch-image-by-gpu.sh /usr/local/bin/switch-image-by-gpu.sh
+install -m 0755 /ctx/scripts/switch-image-by-gpu.sh /usr/bin/switch-image-by-gpu.sh
 
 cat > /usr/lib/systemd/system/bootc-gpu-auto-switch.service << 'EOF'
 [Unit]
@@ -119,7 +125,7 @@ ConditionFirstBoot=yes
 Type=oneshot
 TimeoutStartSec=90
 Environment=AUTO_REBOOT=1
-ExecStart=/usr/bin/timeout 90 /usr/bin/bash /usr/local/bin/switch-image-by-gpu.sh
+ExecStart=/usr/bin/timeout 90 /usr/bin/bash /usr/bin/switch-image-by-gpu.sh
 
 [Install]
 WantedBy=multi-user.target
