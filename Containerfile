@@ -6,6 +6,17 @@ COPY scripts /scripts
 # Base Image
 FROM ghcr.io/ublue-os/bazzite-gnome:stable
 
+FROM ghcr.io/ublue-os/bazzite-gnome-nvidia:stable
+
+# Remove dnf Atomic warning to allow package management
+RUN sed -i '/Fedora Atomic images utilize rpm-ostree/,/^[^ ]/d' /usr/bin/dnf
+
+COPY build_files/ /tmp/build_files/
+COPY scripts/ /tmp/scripts/
+
+RUN /tmp/build_files/build.sh
+RUN bootc container lint
+
 ## Other possible base images include:
 # FROM ghcr.io/ublue-os/bazzite:latest
 # FROM ghcr.io/ublue-os/bluefin-nvidia:stable
