@@ -94,6 +94,8 @@ button-layout=':minimize,maximize,close'
 
 [org/gnome/desktop/interface]
 icon-theme='Papirus'
+color-scheme='prefer-dark'
+gtk-theme='Adwaita'
 EOF
 
 dconf update
