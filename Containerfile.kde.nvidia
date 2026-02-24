@@ -3,8 +3,9 @@ FROM scratch AS ctx
 COPY build_files /
 COPY scripts /scripts
 
-# NVIDIA Base Image
-FROM ghcr.io/ublue-os/bazzite-kde-nvidia:stable
+# Base Image - Use GNOME+NVIDIA as base, then apply KDE customizations
+# This gives us NVIDIA drivers, then KDE-build.sh replaces GNOME with KDE
+FROM ghcr.io/ublue-os/bazzite-gnome-nvidia:stable
 
 # Remove dnf Atomic warning to allow package management
 RUN sed -i '/Fedora Atomic images utilize rpm-ostree/,/^[^ ]/d' /usr/bin/dnf
