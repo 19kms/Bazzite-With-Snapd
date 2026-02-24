@@ -3,8 +3,8 @@ FROM scratch AS ctx
 COPY build_files /
 COPY scripts /scripts
 
-# Base Image
-FROM ghcr.io/ublue-os/bazzite-kde:stable
+# Base Image - Use standard GNOME base, then apply KDE customizations via KDE-build.sh
+FROM ghcr.io/ublue-os/bazzite:stable
 
 # Remove dnf Atomic warning to allow package management
 RUN sed -i '/Fedora Atomic images utilize rpm-ostree/,/^[^ ]/d' /usr/bin/dnf
