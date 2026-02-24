@@ -115,14 +115,18 @@ systemctl enable waydroid-container.service || systemctl enable waydroid-contain
 cat > /usr/lib/systemd/system/waydroid-first-init.service << 'EOF'
 [Unit]
 Description=Initialize Waydroid with GAPPS on first boot
-After=waydroid-container.service
+Wants=network-online.target waydroid-container.service
+After=network-online.target waydroid-container.service
 ConditionPathExists=!/var/lib/waydroid/.initialized
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/waydroid init -s GAPPS -f --system_ota https://ota.waydro.id/system --vendor_ota https://ota.waydro.id/vendor
+ExecStartPre=/usr/bin/mkdir -p /var/lib/waydroid
+ExecStart=/usr/bin/waydroid init -s GAPPS -f --system-ota=https://ota.waydro.id/system --vendor-ota=https://ota.waydro.id/vendor
 ExecStartPost=/usr/bin/touch /var/lib/waydroid/.initialized
 RemainAfterExit=yes
+Restart=on-failure
+RestartSec=60
 
 [Install]
 WantedBy=multi-user.target
@@ -150,6 +154,9 @@ WantedBy=multi-user.target
 EOF
 
 systemctl enable bootc-gpu-auto-switch.service
+
+### Enable automatic bootc updates
+systemctl enable bootc-fetch-apply-updates.timer
 
 ### Remove restrictive polkit rules
 rm -f /etc/polkit-1/rules.d/*package* /etc/polkit-1/rules.d/*rpm*
