@@ -122,7 +122,7 @@ ConditionPathExists=!/var/lib/waydroid/.initialized
 [Service]
 Type=oneshot
 ExecStartPre=/usr/bin/mkdir -p /var/lib/waydroid
-ExecStart=/usr/bin/waydroid init -s GAPPS -f --system-ota=https://ota.waydro.id/system --vendor-ota=https://ota.waydro.id/vendor
+ExecStart=/usr/bin/waydroid init -s GAPPS -f -c https://ota.waydro.id/system -v https://ota.waydro.id/vendor
 ExecStartPost=/usr/bin/touch /var/lib/waydroid/.initialized
 RemainAfterExit=yes
 Restart=on-failure
