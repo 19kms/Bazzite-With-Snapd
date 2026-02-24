@@ -1,0 +1,22 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "dockerfile": {
+    "enabled": true
+  },
+  "docker": {
+    "enabled": true,
+    "automerge": false
+  },
+  "schedule": [
+    "after 10pm every weekday",
+    "before 5am every weekday",
+    "every weekend"
+  ],
+  "automerge": false,
+  "pruneStaleBranches": true,
+  "prConcurrentLimit": 3,
+  "semanticCommits": true
+}
