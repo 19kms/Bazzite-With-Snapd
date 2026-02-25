@@ -27,12 +27,10 @@ d /var/lib/waydroid/cache_http 0755 root root -
 d /var/lib/waydroid/lxc 0755 root root -
 d /var/lib/waydroid/data 0755 root root -
 d /var/lib/waydroid/images 0755 root root -
-EOF
 
-# Create first-boot initialization service for Waydroid with enhanced error handling
-cat > /usr/lib/systemd/system/waydroid-first-init.service << 'EOF'
-[Unit]
-Description=Initialize Waydroid with GAPPS on first boot
+mkdir -p /var/lib/waydroid /var/lib/waydroid/cache_http /var/lib/waydroid/lxc /var/lib/waydroid/data /var/lib/waydroid/images
+chmod 0755 /var/lib/waydroid /var/lib/waydroid/cache_http /var/lib/waydroid/lxc /var/lib/waydroid/data /var/lib/waydroid/images
+chown root:root /var/lib/waydroid /var/lib/waydroid/cache_http /var/lib/waydroid/lxc /var/lib/waydroid/data /var/lib/waydroid/images
 Wants=network-online.target waydroid-container.service
 After=network-online.target waydroid-container.service
 ConditionPathExists=!/var/lib/waydroid/.initialized
