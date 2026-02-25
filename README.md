@@ -1,3 +1,6 @@
+# ⚠️ WARNING: Automatic or unexpected reboots may occur
+
+We are actively investigating and working toward a permanent solution. Please save your work frequently and be aware that system reboots may happen without notice during updates or image switches.
 # Bazzite-With-Snapd
 
 Custom Universal Blue image based on Bazzite, with:
@@ -119,6 +122,12 @@ glib-compile-schemas ~/.local/share/gnome-shell/extensions/<extension-id>/schema
 ## Waydroid
 
 Waydroid is preinstalled and initialized on first boot with Google Apps (GAPPS).
+
+**Note:** The Google Play Store does not work on x86_64 Waydroid due to upstream limitations. Use Aurora Store (pre-installed) to download and install Android apps instead.
+
+### Using Aurora Store
+
+Aurora Store is an open-source alternative client for the Play Store, allowing you to download and update Android apps without a Google account. It is pre-installed in Waydroid. Open Aurora Store from the Waydroid app drawer to get started.
 
 ### First Boot Initialization
 

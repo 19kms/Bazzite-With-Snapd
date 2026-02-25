@@ -165,6 +165,17 @@ ExecStart=/usr/bin/bash -c '\
   \
   echo "[$(date)] Fixing LXCARCH placeholder"; \
   /usr/bin/sed -i "s/LXCARCH/x86_64/g" /var/lib/waydroid/lxc/waydroid/config; \
+
+  # Pre-install Aurora Store APK
+  AURORA_URL="https://f-droid.org/repo/com.aurora.store_73.apk"; \
+  AURORA_APK="/var/lib/waydroid/data/aurora-store.apk"; \
+  echo "[$(date)] Downloading Aurora Store APK from $AURORA_URL"; \
+  if /usr/bin/wget -O "$AURORA_APK" "$AURORA_URL"; then \
+    echo "[$(date)] Installing Aurora Store APK"; \
+    /usr/bin/waydroid app install "$AURORA_APK" || echo "[$(date)] WARNING: Aurora Store APK install failed"; \
+  else \
+    echo "[$(date)] WARNING: Failed to download Aurora Store APK"; \
+  fi; \
   \
   echo "[$(date)] Configuring waydroid.prop"; \
   if [[ -f /var/lib/waydroid/waydroid.prop ]]; then \
@@ -458,6 +469,7 @@ chmod +x /usr/bin/waydroid-playstore-debug
 ### Configure GPU auto-switching
 install -m 0755 /ctx/scripts/switch-image-by-gpu.sh /usr/bin/switch-image-by-gpu.sh
 
+
 cat > /usr/lib/systemd/system/bootc-gpu-auto-switch.service << 'EOF'
 [Unit]
 Description=Auto switch bootc image based on GPU vendor at boot
@@ -467,7 +479,6 @@ After=network-online.target
 [Service]
 Type=oneshot
 TimeoutStartSec=90
-Environment=AUTO_REBOOT=1
 ExecStart=/usr/bin/timeout 90 /usr/bin/bash /usr/bin/switch-image-by-gpu.sh
 
 [Install]

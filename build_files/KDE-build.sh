@@ -371,6 +371,7 @@ chmod +x /usr/bin/waydroid-playstore-debug
 ### Configure GPU auto-switching
 install -m 0755 /ctx/scripts/switch-image-by-gpu.sh /usr/bin/switch-image-by-gpu.sh
 
+
 cat > /usr/lib/systemd/system/bootc-gpu-auto-switch.service << 'EOF'
 [Unit]
 Description=Auto switch bootc image based on GPU vendor at boot
@@ -380,7 +381,6 @@ After=network-online.target
 [Service]
 Type=oneshot
 TimeoutStartSec=90
-Environment=AUTO_REBOOT=1
 ExecStart=/usr/bin/timeout 90 /usr/bin/bash /usr/bin/switch-image-by-gpu.sh
 
 [Install]

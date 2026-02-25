@@ -70,9 +70,4 @@ else
   sudo bootc switch "${target_ref}"
 fi
 
-if [[ "${AUTO_REBOOT:-0}" == "1" ]]; then
-  echo "Switch queued; rebooting now to apply."
-  systemctl --no-block reboot
-else
-  echo "Queued for next boot. Reboot to apply."
-fi
+echo "Switch queued. Please reboot manually to apply the new image. (No automatic reboot will occur.)"
