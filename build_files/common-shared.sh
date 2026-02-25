@@ -137,7 +137,7 @@ RestartSec=60
 WantedBy=multi-user.target
 EOF
 
-systemctl enable waydroid-first-init.service
+systemctl enable waydroid-first-init.service || true
 
 # Create watchdog script for automatic container freeze recovery
 cat > /usr/bin/waydroid-watchdog << 'WATCHDOGEOF'

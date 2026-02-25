@@ -111,7 +111,7 @@ fi
 mkdir -p /var/lib/waydroid/cache_http /var/lib/waydroid/lxc /var/lib/waydroid/data /var/lib/waydroid/images
 chmod 0755 /var/lib/waydroid/cache_http /var/lib/waydroid/lxc /var/lib/waydroid/data /var/lib/waydroid/images
 chown root:root /var/lib/waydroid/cache_http /var/lib/waydroid/lxc /var/lib/waydroid/data /var/lib/waydroid/images
-systemctl enable waydroid-first-init.service
+systemctl enable waydroid-first-init.service || true
 systemctl enable waydroid-watchdog.timer
 echo -e "\nDebug log saved to: $DEBUG_LOG"
 
