@@ -63,3 +63,13 @@ rm -f /etc/polkit-1/rules.d/*package* /etc/polkit-1/rules.d/*rpm*
 # Update os-release to show Bazzite-With-Snapd KDE instead of Bazzite
 sed -i 's/^NAME=.*/NAME="Bazzite-With-Snapd"/' /etc/os-release
 sed -i 's/^PRETTY_NAME=.*/PRETTY_NAME="Bazzite-With-Snapd KDE"/' /etc/os-release
+
+# Install KDE Plasma and TigerVNC server for VNC desktop
+
+dnf5 install -y tigervnc-server plasma-workspace plasma-desktop xterm
+
+dnf5 clean all
+
+# Copy VNC startup script
+cp /ctx/build_files/start-vnc.sh /usr/local/bin/start-vnc.sh
+chmod +x /usr/local/bin/start-vnc.sh
