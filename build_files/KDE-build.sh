@@ -1,5 +1,8 @@
 #!/usr/bin/bash
 
+# Ensure DEBUG_LOG is always set
+: "${DEBUG_LOG:=/dev/null}"
+
 set -ouex pipefail
 
 ### Install required packages
