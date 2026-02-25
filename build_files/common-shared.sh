@@ -216,7 +216,7 @@ Persistent=true
 WantedBy=timers.target
 EOF
 
-systemctl enable waydroid-watchdog.timer
+systemctl enable waydroid-watchdog.timer || true
 
 # Create enhanced helper script for waydroid status monitoring and diagnostics
 cat > /usr/bin/waydroid-check << 'CHECKEOF'
