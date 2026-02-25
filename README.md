@@ -1,6 +1,15 @@
 # ⚠️ WARNING: Automatic or unexpected reboots may occur
 
 We are actively investigating and working toward a permanent solution. Please save your work frequently and be aware that system reboots may happen without notice during updates or image switches.
+
+If you want to turn off auto-updating until this is resolved, run:
+
+	sudo systemctl disable --now bootc-fetch-apply-updates.timer
+
+**Note:** With auto-updating disabled, you will need to update manually:
+
+	sudo bootc upgrade
+	sudo reboot
 # Bazzite-With-Snapd
 
 Custom Universal Blue image based on Bazzite, with:
