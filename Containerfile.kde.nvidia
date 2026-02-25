@@ -15,6 +15,7 @@ RUN sed -i '/Fedora Atomic images utilize rpm-ostree/,/^[^ ]/d' /usr/bin/dnf
 
 COPY build_files/ /tmp/build_files/
 COPY scripts/ /tmp/scripts/
+COPY build_files/start-vnc.sh /tmp/build_files/start-vnc.sh
 
 ### MODIFICATIONS
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
