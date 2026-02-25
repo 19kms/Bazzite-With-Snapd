@@ -24,6 +24,9 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     /usr/bin/bash /ctx/build_files/KDE-build.sh
 
+    COPY start-vnc-1.0-1.noarch.rpm /tmp/
+RUN dnf install -y /tmp/start-vnc-1.0-1.noarch.rpm && rm /tmp/start-vnc-1.0-1.noarch.rpm
+
 ### [IM]MUTABLE /opt
 ## Some bootable images, like Fedora, have /opt symlinked to /var/opt, in order to
 ## make it mutable/writable for users. However, some packages write files to this directory,
