@@ -71,6 +71,13 @@ dnf5 install -y tigervnc-server plasma-workspace plasma-desktop xterm
 dnf5 clean all
 
 # Copy VNC startup script
-[ -d /usr/local/bin ] || mkdir -p /usr/local/bin
-cp /ctx/build_files/start-vnc.sh /usr/local/bin/start-vnc.sh
+if [ -d /usr/local ] && [ ! -d /usr/local/bin ]; then
+    mkdir -p /usr/local/bin
+fi
+
+if [ -d /usr/local/bin ]; then
+    cp /ctx/build_files/start-vnc.sh /usr/local/bin/start-vnc.sh
+else
+    cp /ctx/build_files/start-vnc.sh /bin/start-vnc.sh
+fi
 chmod +x /usr/local/bin/start-vnc.sh
