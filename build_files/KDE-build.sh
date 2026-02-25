@@ -64,33 +64,5 @@ rm -f /etc/polkit-1/rules.d/*package* /etc/polkit-1/rules.d/*rpm*
 sed -i 's/^NAME=.*/NAME="Bazzite-With-Snapd"/' /etc/os-release
 sed -i 's/^PRETTY_NAME=.*/PRETTY_NAME="Bazzite-With-Snapd KDE"/' /etc/os-release
 
-# Install KDE Plasma and TigerVNC server for VNC desktop
-
 dnf5 install -y tigervnc-server plasma-workspace plasma-desktop xterm
-
 dnf5 clean all
-
-# Copy VNC startup script
-
-# Ensure /usr/local is a directory
-if [ ! -d /usr/local ]; then
-  echo "/usr/local is not a directory. Aborting." >&2
-  exit 1
-fi
-
-# Ensure /usr/local/bin exists
-if [ ! -d /usr/local/bin ]; then
-  mkdir -p /usr/local/bin || { echo "Could not create /usr/local/bin. Aborting."; exit 1; }
-fi
-
-
-# Ensure /usr/local/bin is writable by root
-chmod u+rwX /usr/local/bin || { echo "Failed to chmod /usr/local/bin to be writable by root. Aborting." >&2; exit 1; }
-
-if [ ! -w /usr/local/bin ]; then
-  echo "/usr/local/bin is not writable even after chmod. Aborting." >&2
-  exit 1
-fi
-
-cp /ctx/build_files/start-vnc.sh /usr/local/bin/start-vnc.sh || { echo "Failed to copy start-vnc.sh to /usr/local/bin. Aborting."; exit 1; }
-chmod +x /usr/local/bin/start-vnc.sh || { echo "Failed to chmod start-vnc.sh. Aborting."; exit 1; }
