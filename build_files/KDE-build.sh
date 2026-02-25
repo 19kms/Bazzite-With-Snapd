@@ -71,13 +71,16 @@ dnf5 install -y tigervnc-server plasma-workspace plasma-desktop xterm
 dnf5 clean all
 
 # Copy VNC startup script
-if [ -d /usr/local ] && [ ! -d /usr/local/bin ]; then
-    mkdir -p /usr/local/bin
+
+# Ensure /usr/local/bin exists and is writable, fail if not
+if [ ! -d /usr/local/bin ]; then
+  mkdir -p /usr/local/bin || { echo "/usr/local/bin does not exist and could not be created. Aborting."; exit 1; }
 fi
 
-if [ -d /usr/local/bin ]; then
-    cp /ctx/build_files/start-vnc.sh /usr/local/bin/start-vnc.sh
-else
-    cp /ctx/build_files/start-vnc.sh /bin/start-vnc.sh
+if [ ! -w /usr/local/bin ]; then
+  echo "/usr/local/bin is not writable. Aborting." >&2
+  exit 1
 fi
-chmod +x /usr/local/bin/start-vnc.sh
+
+cp /ctx/build_files/start-vnc.sh /usr/local/bin/start-vnc.sh || { echo "Failed to copy start-vnc.sh to /usr/local/bin. Aborting."; exit 1; }
+chmod +x /usr/local/bin/start-vnc.sh || { echo "Failed to chmod start-vnc.sh. Aborting."; exit 1; }
