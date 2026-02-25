@@ -1,3 +1,5 @@
+# Ensure DEBUG_LOG is always set
+: "${DEBUG_LOG:=/dev/null}"
 #!/usr/bin/env bash
 # Shared build logic for GNOME and KDE images.
 # Automates all Waydroid setup, Play Store, Aurora Store, and recovery steps.
