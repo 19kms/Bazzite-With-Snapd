@@ -15,6 +15,7 @@ on:
       - 'Containerfile.kde.nvidia'
       - 'scripts/**'
       - '.github/workflows/build-kde.yml'
+      - 'start-vnc-1.0-1.noarch.rpm'
   workflow_dispatch:
 
 env:
