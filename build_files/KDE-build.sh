@@ -72,13 +72,23 @@ dnf5 clean all
 
 # Copy VNC startup script
 
-# Ensure /usr/local/bin exists and is writable, fail if not
-if [ ! -d /usr/local/bin ]; then
-  mkdir -p /usr/local/bin || { echo "/usr/local/bin does not exist and could not be created. Aborting."; exit 1; }
+# Ensure /usr/local is a directory
+if [ ! -d /usr/local ]; then
+  echo "/usr/local is not a directory. Aborting." >&2
+  exit 1
 fi
 
+# Ensure /usr/local/bin exists
+if [ ! -d /usr/local/bin ]; then
+  mkdir -p /usr/local/bin || { echo "Could not create /usr/local/bin. Aborting."; exit 1; }
+fi
+
+
+# Ensure /usr/local/bin is writable by root
+chmod u+rwX /usr/local/bin || { echo "Failed to chmod /usr/local/bin to be writable by root. Aborting." >&2; exit 1; }
+
 if [ ! -w /usr/local/bin ]; then
-  echo "/usr/local/bin is not writable. Aborting." >&2
+  echo "/usr/local/bin is not writable even after chmod. Aborting." >&2
   exit 1
 fi
 
