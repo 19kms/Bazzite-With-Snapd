@@ -3,11 +3,20 @@ FROM scratch AS ctx
 COPY build_files /
 COPY scripts /scripts
 
-# NVIDIA Base Image
-FROM ghcr.io/ublue-os/bazzite-gnome-nvidia:stable
+# Add NVIDIA support from install-nvidia.sh
+COPY scripts/install-nvidia.sh /usr/local/bin/install-nvidia.sh
+RUN /usr/local/bin/install-nvidia.sh
 
-# Remove dnf Atomic warning to allow package management
-RUN sed -i '/Fedora Atomic images utilize rpm-ostree/,/^[^ ]/d' /usr/bin/dnf
+FROM quay.io/fedora/fedora:43
+
+# Install rpm-ostree for immutability and overlays
+RUN dnf install -y rpm-ostree
+
+# Configure rpm-ostree to allow layered packages and overlays
+RUN echo 'allow-dnf=true' >> /etc/rpm-ostree.conf || true
+
+# Optionally, install dnf5 for normal RPM management
+RUN dnf install -y dnf5
 
 COPY build_files/ /tmp/build_files/
 COPY scripts/ /tmp/scripts/
@@ -19,17 +28,4 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     /usr/bin/bash /ctx/build.sh
 
-### [IM]MUTABLE /opt
-## Some bootable images, like Fedora, have /opt symlinked to /var/opt, in order to
-## make it mutable/writable for users. However, some packages write files to this directory,
-## thus its contents might be wiped out when bootc deploys an image, making it troublesome for
-## some packages. Eg, google-chrome, docker-desktop.
-##
-## Uncomment the following line if one desires to make /opt immutable and be able to be used
-## by the package manager.
-
-# RUN rm /opt && mkdir /opt
-
-### LINTING
-## Verify final image and contents are correct.
 RUN bootc container lint

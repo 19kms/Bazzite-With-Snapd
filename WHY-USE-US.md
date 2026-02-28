@@ -1,18 +1,25 @@
-## Why Use Bazzite-With-Snapd?
 
-Bazzite-With-Snapd offers several advantages over stock Bazzite:
+## Why Use NixoraOS?
 
-- **Waydroid Preinstalled & Enhanced:** Android container ready out-of-the-box, with Aurora Store for easy app installs.
-- **Snapd Support:** Full Snap package support for broader app compatibility.
-- **Automated Updates:** System auto-updates with improved reliability.
-- **Extra Diagnostics:** Enhanced troubleshooting tools and watchdogs for Waydroid.
-- **User Experience:** Tweaks and fixes for smoother desktop and Android integration.
+NixoraOS offers several advantages over other gaming-focused Linux systems:
 
-**Compared to stock Bazzite, you get:**
 
-- No manual setup for Android apps (Waydroid/Aurora preinstalled)
-- Snapd support (not in upstream Bazzite)
-- More robust update and diagnostic tooling
-- Clear documentation for known issues and workarounds
+**Compared to other gaming OSes, you get:**
 
-Ideal for users who want a ready-to-go desktop with Android and Snap support, plus a smoother experience than stock Bazzite.
+
+## Why Use NixoraOS?
+
+NixoraOS is a modern, independent operating system designed for performance, flexibility, and ease of use. Here’s what makes it stand out:
+
+- **Optimized for Gaming:** Enhanced graphics, driver support, and performance tweaks for gamers.
+- **Seamless Android Integration:** Waydroid preinstalled for running Android apps natively.
+- **Snap & Flatpak Support:** Access a wide range of apps from multiple sources.
+- **Automatic Updates:** Reliable, unattended system and app updates.
+- **Customizable Desktop:** Choose GNOME or KDE, with preinstalled extensions and themes.
+- **Easy Hardware Switching:** Built-in scripts for GPU detection and image switching.
+- **Enhanced Troubleshooting:** Diagnostic tools and clear documentation for resolving issues.
+- **Privacy & Security:** Secure defaults, disk encryption, and SELinux enabled.
+- **Fast Boot & Smooth Experience:** Plymouth theme, optimized startup, and responsive UI.
+- **Active Community & Support:** Friendly help, guides, and regular improvements.
+
+NixoraOS is built for users who want a ready-to-go desktop with Android, Snap, and gaming support—no manual setup required. Enjoy a polished, reliable experience with full control and customization.

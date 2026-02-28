@@ -1,0 +1,20 @@
+# Containerfile for testing environment
+FROM quay.io/fedora/fedora:43
+
+# Install basic testing tools
+RUN dnf install -y \
+    git \
+    curl \
+    vim \
+    nano \
+    htop \
+    dnf5 \
+    rpm-ostree
+
+COPY build_files/ /tmp/build_files/
+COPY scripts/ /tmp/scripts/
+
+### MODIFICATIONS
+# Add any test-specific setup below
+
+CMD ["/bin/bash"]

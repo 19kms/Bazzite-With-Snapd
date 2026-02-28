@@ -1,0 +1,15 @@
+[Unit]
+Description=Nixora Graphics Validation (Post-Login)
+After=graphical.target
+Wants=graphical.target
+ConditionPathExists=/usr/lib/nixora/gpu-health-check.sh
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/nixora/gpu-health-check.sh
+TimeoutStartSec=45
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/run/user/1000/gdm/Xauthority
+
+[Install]
+WantedBy=graphical.target

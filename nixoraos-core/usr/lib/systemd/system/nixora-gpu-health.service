@@ -1,0 +1,12 @@
+[Unit]
+Description=Nixora GPU Health Check
+After=graphical.target
+Wants=graphical.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/nixora/gpu-health-check.sh
+TimeoutStartSec=30
+
+[Install]
+WantedBy=graphical.target

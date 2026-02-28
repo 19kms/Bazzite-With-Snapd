@@ -1,3 +1,9 @@
+# Ensure /usr/sbin/dnf is a working wrapper to dnf5
+cat <<'EOF' > /usr/sbin/dnf
+#!/usr/bin/bash
+exec /usr/bin/dnf5 "$@"
+EOF
+chmod +x /usr/sbin/dnf
 # Ensure DEBUG_LOG is always set
 : "${DEBUG_LOG:=/dev/null}"
 #!/usr/bin/env bash
@@ -5,6 +11,11 @@
 # Automates all Waydroid setup, Play Store, Aurora Store, and recovery steps.
 
 set -ouex pipefail
+
+### Ensure dnf is installed and functional
+if ! rpm -q dnf >/dev/null 2>&1; then
+  dnf5 install -y dnf
+fi
 
 # Install Waydroid if not present
 if ! rpm -q waydroid >/dev/null 2>&1; then
@@ -373,3 +384,21 @@ echo -e "\nDebug log saved to: $DEBUG_LOG"
 DEBUGEOF
 
 chmod +x /usr/bin/waydroid-playstore-debug
+
+
+# Full OS rebranding with DE detection
+sed -i 's/^NAME=.*/NAME="NixoraOS"/' /etc/os-release
+sed -i 's/^ID=.*/ID=nixoraos/' /etc/os-release
+sed -i 's/^ID_LIKE=.*/ID_LIKE=fedora/' /etc/os-release
+sed -i 's/^HOME_URL=.*/HOME_URL="https:\/\/nixoraos.example.com"/' /etc/os-release
+sed -i 's/^SUPPORT_URL=.*/SUPPORT_URL="https:\/\/nixoraos.example.com\/support"/' /etc/os-release
+sed -i 's/^BUG_REPORT_URL=.*/BUG_REPORT_URL="https:\/\/nixoraos.example.com\/bugs"/' /etc/os-release
+sed -i 's/^VERSION=.*/VERSION="1.0"/' /etc/os-release
+
+if [[ "$DESKTOP_FLAVOR" == "GNOME" ]]; then
+  sed -i 's/^PRETTY_NAME=.*/PRETTY_NAME="NixoraOS GNOME"/' /etc/os-release
+elif [[ "$DESKTOP_FLAVOR" == "KDE" ]]; then
+  sed -i 's/^PRETTY_NAME=.*/PRETTY_NAME="NixoraOS KDE"/' /etc/os-release
+else
+  sed -i 's/^PRETTY_NAME=.*/PRETTY_NAME="NixoraOS"/' /etc/os-release
+fi

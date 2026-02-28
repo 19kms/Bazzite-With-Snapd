@@ -1,0 +1,12 @@
+[Unit]
+Description=Nixora Automatic Update
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/nixora/auto-update.sh
+TimeoutStartSec=900
+
+[Install]
+WantedBy=multi-user.target

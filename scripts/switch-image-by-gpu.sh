@@ -4,7 +4,7 @@ set -euo pipefail
 
 usage() {
   echo "Usage: $0 [ghcr-owner/image-name] [standard-tag] [nvidia-tag]"
-  echo "Example: $0 19kms/bazzite-with-snapd latest nvidia"
+  echo "Example: $0 NixoraOS/nixoraos latest nvidia"
 }
 
 standard_tag="${2:-latest}"

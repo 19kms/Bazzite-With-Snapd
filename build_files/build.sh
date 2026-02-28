@@ -145,7 +145,3 @@ systemctl enable bootc-fetch-apply-updates.timer
 ### Remove restrictive polkit rules
 rm -f /etc/polkit-1/rules.d/*package* /etc/polkit-1/rules.d/*rpm*
 
-### Customize OS identification
-# Update os-release to show Bazzite-With-Snapd GNOME instead of Bazzite
-sed -i 's/^NAME=.*/NAME="Bazzite-With-Snapd"/' /etc/os-release
-sed -i 's/^PRETTY_NAME=.*/PRETTY_NAME="Bazzite-With-Snapd GNOME"/' /etc/os-release

@@ -1,6 +1,6 @@
 # Waydroid Troubleshooting & Deep Diagnostics Guide
 
-This guide covers comprehensive troubleshooting for Waydroid issues in Bazzite-With-Snapd, focusing on Play Store functionality and container stability.
+This guide covers comprehensive troubleshooting for Waydroid issues in NixoraOS, focusing on Play Store functionality and container stability.
 
 ## Quick Status Check
 
